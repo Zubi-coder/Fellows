@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fellows Steel Bar Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --royal-purple: #4A154B;
+            --royal-gold: #D4AF37;
+            --royal-blue: #002366;
+            --royal-red: #B22222;
+            --royal-silver: #C0C0C0;
+            --royal-cream: #F5F5DC;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--royal-blue), var(--royal-purple));
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        header h1 {
+            color: var(--royal-gold);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            color: var(--royal-silver);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .app-container {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .input-section, .result-section {
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .input-section {
+            background: rgba(245, 245, 245, 0.9);
+            border: 1px solid var(--royal-silver);
+        }
+        
+        .result-section {
+            background: linear-gradient(145deg, var(--royal-cream), #fff);
+            border: 1px solid var(--royal-gold);
+            position: relative;
+        }
+        
+        .section-title {
+            color: var(--royal-blue);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--royal-gold);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--royal-purple);
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-row input, .input-row select {
+            flex: 1;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--royal-silver);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--royal-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        }
+        
+        .diameter-slider-container {
+            margin-top: 10px;
+        }
+        
+        #diameterSlider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, var(--royal-blue), var(--royal-purple));
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        #diameterSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--royal-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .common-diameters {
+            margin-top: 25px;
+        }
+        
+        .diameter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .diameter-btn {
+            background: var(--royal-purple);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .diameter-btn:hover {
+            background: var(--royal-blue);
+            transform: translateY(-2px);
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, var(--royal-gold), var(--royal-red));
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--royal-silver);
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: var(--royal-blue);
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--royal-purple);
+        }
+        
+        .total-weight {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(178, 34, 34, 0.3));
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .total-weight-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--royal-blue);
+            margin-bottom: 10px;
+        }
+        
+        .total-weight-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--royal-purple);
+        }
+        
+        .formula-box {
+            background: rgba(0, 35, 102, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+        
+        .standards-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--royal-silver);
+        }
+        
+        th {
+            background: var(--royal-purple);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        tr:hover {
+            background-color: rgba(74, 21, 75, 0.1);
+        }
+        
+        footer {
+            width: 100%;
+            background: var(--royal-purple);
+            color: var(--royal-silver);
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.1;
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--royal-gold);
+            pointer-events: none;
+        }
+        
+        .info-text {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+            color: var(--royal-silver);
+            font-size: 0.9rem;
+            padding: 0 20px;
+        }
+        
+        .offline-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--royal-red);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .result-value {
+                font-size: 1.2rem;
+            }
+            
+            .total-weight-value {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-status" id="offlineStatus">
+        <i class="fas fa-wifi"></i> You are currently offline
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-weight-hanging"></i> Fellows Steel Bar Calculator</h1>
+            <p>Calculate weights for steel bars of any diameter - works worldwide</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="calculator-grid">
+                <div class="input-section">
+                    <h2 class="section-title">Steel Bar Specifications</h2>
+                    
+                    <div class="input-group">
+                        <label for="diameter">Diameter (mm)</label>
+                        <input type="number" id="diameter" min="1" max="100" step="0.5" placeholder="e.g. 8, 10, 12..." value="12">
+                        <div class="diameter-slider-container">
+                            <input type="range" id="diameterSlider" min="3" max="50" step="0.5" value="12">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Length</label>
+                        <div class="input-row">
+                            <input type="number" id="length" min="0.1" step="0.1" value="1">
+                            <select id="unit">
+                                <option value="meter">Meters</option>
+                                <option value="feet">Feet</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" min="1" value="1">
+                    </div>
+                    
+                    <button id="calculateBtn" class="calculate-btn">
+                        <i class="fas fa-calculator"></i> Calculate Weight
+                    </button>
+                    
+                    <!-- <div class="common-diameters">
+                        <h3 class="section-title">Common Diameters</h3>
+                        <div class="diameter-buttons">
+                            <button class="diameter-btn" data-dia="6">6mm</button>
+                            <button class="diameter-btn" data-dia="8">8mm</button>
+                            <button class="diameter-btn" data-dia="10">10mm</button>
+                            <button class="diameter-btn" data-dia="12">12mm</button>
+                            <button class="diameter-btn" data-dia="16">16mm</button>
+                            <button class="diameter-btn" data-dia="20">20mm</button>
+                            <button class="diameter-btn" data-dia="25">25mm</button>
+                            <button class="diameter-btn" data-dia="32">32mm</button>
+                        </div>
+                    </div> -->
+                </div>
+                
+                <div class="result-section">
+                    <h2 class="section-title">Calculation Results</h2>
+                    
+                    <div class="result-item">
+                        <div class="result-label">Weight per meter:</div>
+                        <div id="weightPerMeter" class="result-value">0.888 kg/m</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">Weight per foot:</div>
+                        <div id="weightPerFoot" class="result-value">0.271 kg/ft</div>
+                    </div>
+                    
+                    <div class="total-weight">
+                        <div class="total-weight-label">Total Weight</div>
+                        <div id="totalWeight" class="total-weight-value">0.888 kg</div>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <strong>Formula Used:</strong><br>
+                        Weight = (D² × L × Q) / 162<br>
+                        Where:<br>
+                        D = Diameter in mm<br>
+                        L = Length in meters<br>
+                        Q = Quantity
+                    </div>
+                </div>
+            </div>
+            
+            <div class="standards-section">
+                <h2 class="section-title">Standard Steel Bar Weights</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diameter (mm)</th>
+                            <th>Weight per Meter (kg)</th>
+                            <th>Weight per Foot (kg)</th>
+                            <th>US Size</th>
+                            <th>EU Size</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6</td>
+                            <td>0.222</td>
+                            <td>0.068</td>
+                            <td>#2</td>
+                            <td>6mm</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>0.395</td>
+                            <td>0.120</td>
+                            <td>#2.5</td>
+                            <td>8mm</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>0.617</td>
+                            <td>0.188</td>
+                            <td>#3</td>
+                            <td>10mm</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>0.888</td>
+                            <td>0.271</td>
+                            <td>#4</td>
+                            <td>12mm</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td>1.579</td>
+                            <td>0.481</td>
+                            <td>#5</td>
+                            <td>16mm</td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td>2.466</td>
+                            <td>0.752</td>
+                            <td>#6</td>
+                            <td>20mm</td>
+                        </tr>
+                        <tr>
+                            <td>25</td>
+                            <td>3.854</td>
+                            <td>1.175</td>
+                            <td>#8</td>
+                            <td>25mm</td>
+                        </tr>
+                        <tr>
+                            <td>32</td>
+                            <td>6.313</td>
+                            <td>1.924</td>
+                            <td>#10</td>
+                            <td>32mm</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <footer>
+                <div class="watermark">FELLOWS</div>
+                <p>Created with <i class="fas fa-heart" style="color: var(--royal-red);"></i> by Fellow Developer Pvt.Ltd</p>
+                <p>© 2025 Fellow Steel Bar Calculator | All rights reserved</p>
+            </footer>
+        </div>
+        
+        <div class="info-text">
+            <p>This calculator uses the standard formula: Weight = (Diameter² × Length × Quantity) / 162</p>
+            <p>Applicable for all steel reinforcement bars worldwide. Results are approximate.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const diameterInput = document.getElementById('diameter');
+            const diameterSlider = document.getElementById('diameterSlider');
+            const lengthInput = document.getElementById('length');
+            const unitSelect = document.getElementById('unit');
+            const quantityInput = document.getElementById('quantity');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const weightPerMeterEl = document.getElementById('weightPerMeter');
+            const weightPerFootEl = document.getElementById('weightPerFoot');
+            const totalWeightEl = document.getElementById('totalWeight');
+            const diameterButtons = document.querySelectorAll('.diameter-btn');
+            const offlineStatus = document.getElementById('offlineStatus');
+            
+            // Check online status
+            function updateOnlineStatus() {
+                if (!navigator.onLine) {
+                    offlineStatus.style.display = 'block';
+                } else {
+                    offlineStatus.style.display = 'none';
+                }
+            }
+            
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+            
+            // Sync slider and input
+            diameterInput.addEventListener('input', function() {
+                diameterSlider.value = this.value;
+                calculateWeight();
+            });
+            
+            diameterSlider.addEventListener('input', function() {
+                diameterInput.value = this.value;
+                calculateWeight();
+            });
+            
+            // Common diameter buttons
+            diameterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const dia = this.getAttribute('data-dia');
+                    diameterInput.value = dia;
+                    diameterSlider.value = dia;
+                    calculateWeight();
+                });
+            });
+            
+            // Calculate when any input changes
+            [diameterInput, lengthInput, unitSelect, quantityInput].forEach(input => {
+                input.addEventListener('input', calculateWeight);
+            });
+            
+            // Calculate button
+            calculateBtn.addEventListener('click', calculateWeight);
+            
+            // Calculate weight function
+            function calculateWeight() {
+                const diameter = parseFloat(diameterInput.value);
+                let length = parseFloat(lengthInput.value);
+                const quantity = parseFloat(quantityInput.value);
+                const unit = unitSelect.value;
+                
+                // Validate inputs
+                if (isNaN(diameter) || isNaN(length) || isNaN(quantity) || 
+                    diameter <= 0 || length <= 0 || quantity <= 0) {
+                    weightPerMeterEl.textContent = 'Invalid input';
+                    weightPerFootEl.textContent = 'Invalid input';
+                    totalWeightEl.textContent = 'Invalid input';
+                    return;
+                }
+                
+                // Convert to meters if in feet
+                if (unit === 'feet') {
+                    length = length * 0.3048; // Convert feet to meters
+                }
+                
+                // Calculate weight per meter (kg)
+                const weightPerMeter = (diameter * diameter) / 162;
+                
+                // Calculate weight per foot (kg)
+                const weightPerFoot = weightPerMeter * 0.3048;
+                
+                // Calculate total weight (kg)
+                const totalWeight = weightPerMeter * length * quantity;
+                
+                // Update DOM
+                weightPerMeterEl.textContent = weightPerMeter.toFixed(3) + ' kg/m';
+                weightPerFootEl.textContent = weightPerFoot.toFixed(3) + ' kg/ft';
+                totalWeightEl.textContent = totalWeight.toFixed(3) + ' kg';
+            }
+            
+            // Initial calculation
+            calculateWeight();
+            
+            // Save data to localStorage
+            function saveData() {
+                const data = {
+                    diameter: diameterInput.value,
+                    length: lengthInput.value,
+                    unit: unitSelect.value,
+                    quantity: quantityInput.value
+                };
+                localStorage.setItem('steelCalculatorData', JSON.stringify(data));
+            }
+            
+            // Load data from localStorage
+            function loadData() {
+                const savedData = localStorage.getItem('steelCalculatorData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    diameterInput.value = data.diameter;
+                    diameterSlider.value = data.diameter;
+                    lengthInput.value = data.length;
+                    unitSelect.value = data.unit;
+                    quantityInput.value = data.quantity;
+                    calculateWeight();
+                }
+            }
+            
+            // Save on input change
+            [diameterInput, lengthInput, unitSelect, quantityInput].forEach(input => {
+                input.addEventListener('input', saveData);
+            });
+            
+            // Load saved data on page load
+            loadData();
+        });
+    </script>
+</body>
+</html>
